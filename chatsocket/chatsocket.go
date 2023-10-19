@@ -45,6 +45,7 @@ type Client struct {
 	send      chan Message
 	hub       *Hub
 	writeLock sync.Mutex
+	closeOnce sync.Once
 }
 
 func NewClient(id string, conn *websocket.Conn, hub *Hub) *Client {
@@ -86,8 +87,8 @@ func (c *Client) Read(ctx *gin.Context) {
 			msg.Sender = "bot"
 			msg.Content = newContent.Val()
 			log.Printf("BOT CONTENT: %s", newContent.Val())
+			SendMessageToClient(msg, c)
 		}
-		SendMessageToClient(msg, c)
 	}
 }
 
@@ -125,7 +126,9 @@ func (c *Client) Write() {
 }
 
 func (c *Client) Close() {
-	close(c.send)
+	c.closeOnce.Do(func() {
+		close(c.send)
+	})
 }
 
 type GinContext struct {
@@ -151,5 +154,5 @@ func ServeWS(ctx *gin.Context, roomId string) {
 }
 
 func SendMessageToClient(message Message, client *Client) {
-	client.send <- message
+	client.hub.broadcast <- message
 }
