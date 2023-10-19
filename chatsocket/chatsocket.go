@@ -35,8 +35,14 @@ func init() {
 	go mainHub.Run()
 }
 
+var singleHub *Hub
+
 func GetHub() *Hub {
-	return mainHub
+	if singleHub == nil {
+		singleHub = NewHub()
+		go singleHub.Run()
+	}
+	return singleHub
 }
 
 type Client struct {
