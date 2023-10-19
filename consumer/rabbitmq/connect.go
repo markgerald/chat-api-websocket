@@ -3,10 +3,11 @@ package rabbitmq
 import (
 	"github.com/streadway/amqp"
 	"log"
+	"os"
 )
 
 func ConnectToRabbitMQ() (*amqp.Connection, error) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial(os.Getenv("AMQP_URL"))
 	if err != nil {
 		log.Fatal(err)
 		return nil, err

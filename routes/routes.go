@@ -23,13 +23,10 @@ func HandleRequests() {
 		chatsocket.ServeWS(c, "1")
 	})
 	protected := r.Group("/")
-
 	protected.Use(middlewares.JwtMiddleware())
 	{
 		protected.GET("/messages", chat.Chat{}.GetLastMessages)
-		//protected.POST("/messages", chat.PostMessage)
 	}
-
 	err := r.Run(":8000")
 	if err != nil {
 		return

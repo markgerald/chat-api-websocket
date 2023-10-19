@@ -10,8 +10,3 @@ func GetLastMessages(quantity int) []models.Message {
 	database.DB.Order("created_at desc").Limit(quantity).Find(&messages)
 	return messages
 }
-
-func CreateMessage(message models.Message) models.Message {
-	database.DB.Create(&message)
-	return message
-}
