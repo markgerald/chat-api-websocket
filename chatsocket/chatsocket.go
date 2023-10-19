@@ -29,6 +29,15 @@ var Upgrader = websocket.Upgrader{
 		return true
 	},
 }
+var mainHub = NewHub()
+
+func init() {
+	go mainHub.Run()
+}
+
+func GetHub() *Hub {
+	return mainHub
+}
 
 type Client struct {
 	ID   string
@@ -109,12 +118,6 @@ func (c *Client) Close() {
 	close(c.send)
 }
 
-func GetHub() *Hub {
-	hub := NewHub()
-	go hub.Run()
-	return hub
-}
-
 type GinContext struct {
 	context *gin.Context
 }
@@ -130,8 +133,9 @@ func getUpgrader(ctx *gin.Context) *websocket.Conn {
 
 func ServeWS(ctx *gin.Context, roomId string) {
 	ws := getUpgrader(ctx)
-	client := NewClient(roomId, ws, GetHub())
-	GetHub().register <- client
+	hub := GetHub()
+	client := NewClient(roomId, ws, hub)
+	hub.register <- client
 	log.Println("Client registered: " + client.ID)
 	go client.Write()
 	go client.Read(ctx)

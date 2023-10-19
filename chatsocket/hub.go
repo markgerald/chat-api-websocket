@@ -61,20 +61,25 @@ func (h *Hub) RemoveClient(client *Client) {
 	}
 }
 
-func (h *Hub) HandleMessage(message Message) {
-	if message.Type == "message" {
-		clients := h.clients[message.ID]
+func (h *Hub) BroadcastToAll(message Message) {
+	for _, clients := range h.clients {
 		for client := range clients {
 			select {
 			case client.send <- message:
 			default:
 				close(client.send)
-				delete(h.clients[message.ID], client)
+				delete(clients, client)
 			}
 		}
 	}
+}
 
-	if message.Type == "notification" {
+func (h *Hub) HandleMessage(message Message) {
+	switch message.Type {
+	case "message":
+		h.BroadcastToAll(message) // Aqui está a modificação para enviar para todos os usuários.
+
+	case "notification":
 		fmt.Println("Notification: ", message.Content)
 		clients := h.clients[message.Recipient]
 		for client := range clients {
@@ -86,5 +91,4 @@ func (h *Hub) HandleMessage(message Message) {
 			}
 		}
 	}
-
 }

@@ -26,6 +26,7 @@ func HandleRequests() {
 	protected.Use(middlewares.JwtMiddleware())
 	{
 		protected.GET("/messages", chat.Chat{}.GetLastMessages)
+		protected.GET("/users/:id", user.GetUserById)
 	}
 	err := r.Run(":8000")
 	if err != nil {
