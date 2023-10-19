@@ -6,10 +6,11 @@ import (
 	"github.com/markgerald/chat-api-challenge/models"
 	"github.com/markgerald/chat-api-challenge/repository"
 	"golang.org/x/crypto/bcrypt"
+	"os"
 	"time"
 )
 
-var JwtKey = []byte("my_secret_key")
+var JwtKey = []byte(os.Getenv("JWT_KEY"))
 
 type Claims struct {
 	Email string `json:"email"`

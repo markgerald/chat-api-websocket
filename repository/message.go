@@ -7,6 +7,6 @@ import (
 
 func GetLastMessages(quantity int) []models.Message {
 	var messages []models.Message
-	database.DB.Order("created_at desc").Limit(quantity).Find(&messages)
+	database.DB.Order("created_at asc").Limit(quantity).Find(&messages)
 	return messages
 }
