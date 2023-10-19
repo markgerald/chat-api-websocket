@@ -1,0 +1,40 @@
+
+version: '3.6'
+services:
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password --sql_mode=''
+    environment:
+      MYSQL_ROOT_PASSWORD: secretRoot
+      MYSQL_DATABASE: chat
+      MYSQL_USER: chat
+      MYSQL_PASSWORD: secret
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - ./infra/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis-compose:
+    image: redis
+    command: redis-server --requirepass MgM23 --appendonly yes
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/var/lib/postgresql/data
+
+volumes:
+  mysql:
+  redis:
