@@ -23,7 +23,6 @@ func (pm *ProcessMessage) ProcessMessage(c *gin.Context, message models.Message)
 	}
 	newMessage := `{"sender": "` + message.Username + `", "message":"` + message.Content + `"}`
 	producermessage.SendToQueueMessage([]byte(newMessage), c)
-	log.Printf("AH mensagem tá seno mandada assim: " + newMessage)
 	c.Set("message", message)
 	c.Next()
 	return message

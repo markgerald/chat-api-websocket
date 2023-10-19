@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/markgerald/chat-api-challenge/chatsocket"
 	"github.com/markgerald/chat-api-challenge/consumer/rabbitmq"
 	rediscache "github.com/markgerald/chat-api-challenge/consumer/redis"
@@ -11,6 +12,10 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	chatHub := chatsocket.GetHub()
 	ConsumeStockFromQueue(chatHub)
 }
